@@ -39,6 +39,14 @@
 #define IRQ_MODE    0x12            // IRQ mode
 #define SVC_MODE    0x13            // SVC mode
 
+#ifdef TX_ENABLE_VFP_SUPPORT
+IRQ_MASK        =   0x080
+#endif
+
+#ifdef TX_ENABLE_FIQ_SUPPORT
+FIQ_MASK        =   0x040
+#endif
+
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
