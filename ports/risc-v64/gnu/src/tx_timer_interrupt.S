@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (c) 2024 Microsoft Corporation 
+ * Copyright (c) 2026 10xEngineers
  * 
  * This program and the accompanying materials are made available under the
  * terms of the MIT License which is available at
@@ -29,7 +29,7 @@
 /*                                                           6.2.1        */
 /*  AUTHOR                                                                */ 
 /*                                                                        */ 
-/*    Scott Larson, Microsoft Corporation                                 */ 
+/*    Akif Ejaz, 10xEngineers                                             */ 
 /*                                                                        */ 
 /*  DESCRIPTION                                                           */ 
 /*                                                                        */ 
@@ -60,7 +60,7 @@
 /*                                                                        */ 
 /*    DATE              NAME                      DESCRIPTION             */ 
 /*                                                                        */ 
-/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */ 
+/*  01-20-2023       Akif Ejaz                Initial Version 6.2.1       */ 
 /*                                                                        */ 
 /**************************************************************************/ 
 /* VOID   _tx_timer_interrupt(VOID)

@@ -67,7 +67,6 @@
 _tx_thread_schedule:
 
     /* Enable interrupts.  */
-    /* mstatus |= MIE;  */
     csrsi   mstatus, 0x08                               /* Enable interrupts (MIE bit 3) */
 
     /* Wait for a thread to execute.  */
