@@ -1,10 +1,10 @@
 /***************************************************************************
- * Copyright (c) 2024 Microsoft Corporation 
- * 
+ * Copyright (c) 2024 Microsoft Corporation
+ *
  * This program and the accompanying materials are made available under the
  * terms of the MIT License which is available at
  * https://opensource.org/licenses/MIT.
- * 
+ *
  * SPDX-License-Identifier: MIT
  **************************************************************************/
 
@@ -236,8 +236,17 @@ UINT                                            _tx_thread_interrupt_control(UIN
 
 #define TX_INTERRUPT_SAVE_AREA                  register UINT interrupt_save;
 
-#define TX_DISABLE                              interrupt_save =  _tx_thread_interrupt_control(TX_INT_DISABLE);
-#define TX_RESTORE                              _tx_thread_interrupt_control(interrupt_save);
+#define TX_DISABLE                              __asm__ volatile("csrrci %0, mstatus, 8" : "=r" (interrupt_save) :: "memory");
+#define TX_RESTORE                              { \
+                                                    unsigned long _temp_mstatus; \
+                                                    __asm__ volatile( \
+                                                        "csrc mstatus, 8\n" \
+                                                        "andi %0, %1, 8\n" \
+                                                        "csrs mstatus, %0" \
+                                                        : "=&r" (_temp_mstatus) \
+                                                        : "r" (interrupt_save) \
+                                                        : "memory"); \
+                                                }
 
 #else
 

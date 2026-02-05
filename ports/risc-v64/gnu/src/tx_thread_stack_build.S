@@ -1,10 +1,10 @@
 /***************************************************************************
- * Copyright (c) 2024 Microsoft Corporation 
- * 
+ * Copyright (c) 2024 Microsoft Corporation
+ *
  * This program and the accompanying materials are made available under the
  * terms of the MIT License which is available at
  * https://opensource.org/licenses/MIT.
- * 
+ *
  * SPDX-License-Identifier: MIT
  **************************************************************************/
 
@@ -136,91 +136,91 @@ If floating point support:
 
     Stack Bottom: (higher memory address)  */
 
-    ld      t0, 32(a0)                                  /* Pickup end of stack area */
-    li      t1, ~15                                     /* Build 16-byte alignment mask */
-    and     t0, t0, t1                                  /* Make sure 16-byte alignment */
+    ld      t0, 32(a0)                                  // Pickup end of stack area
+    li      t1, ~15                                     // Build 16-byte alignment mask
+    and     t0, t0, t1                                  // Make sure 16-byte alignment
 
     /* Actually build the stack frame.  */
 
 #if defined(__riscv_float_abi_single) || defined(__riscv_float_abi_double)
     addi    t0, t0, -65*8
 #else
-    addi    t0, t0, -32*8                               /* Allocate space for the stack frame */
+    addi    t0, t0, -32*8                               // Allocate space for the stack frame
 #endif
-    li      t1, 1                                       /* Build stack type */
-    sd      t1,  0*8(t0)                                /* Place stack type on the top */
-    sd      zero,  1*8(t0)                              /* Initial s11 */
-    sd      zero,  2*8(t0)                              /* Initial s10 */
-    sd      zero,  3*8(t0)                              /* Initial s9 */
-    sd      zero,  4*8(t0)                              /* Initial s8 */
-    sd      zero,  5*8(t0)                              /* Initial s7 */
-    sd      zero,  6*8(t0)                              /* Initial s6 */
-    sd      zero,  7*8(t0)                              /* Initial s5 */
-    sd      zero,  8*8(t0)                              /* Initial s4 */
-    sd      zero,  9*8(t0)                              /* Initial s3 */
-    sd      zero, 10*8(t0)                              /* Initial s2 */
-    sd      zero, 11*8(t0)                              /* Initial s1 */
-    sd      zero, 12*8(t0)                              /* Initial s0 */
-    sd      zero, 13*8(t0)                              /* Initial t6 */
-    sd      zero, 14*8(t0)                              /* Initial t5 */
-    sd      zero, 15*8(t0)                              /* Initial t4 */
-    sd      zero, 16*8(t0)                              /* Initial t3 */
-    sd      zero, 17*8(t0)                              /* Initial t2 */
-    sd      zero, 18*8(t0)                              /* Initial t1 */
-    sd      zero, 19*8(t0)                              /* Initial t0 */
-    sd      zero, 20*8(t0)                              /* Initial a7 */
-    sd      zero, 21*8(t0)                              /* Initial a6 */
-    sd      zero, 22*8(t0)                              /* Initial a5 */
-    sd      zero, 23*8(t0)                              /* Initial a4 */
-    sd      zero, 24*8(t0)                              /* Initial a3 */
-    sd      zero, 25*8(t0)                              /* Initial a2 */
-    sd      zero, 26*8(t0)                              /* Initial a1 */
-    sd      zero, 27*8(t0)                              /* Initial a0 */
-    sd      zero, 28*8(t0)                              /* Initial ra */
-    sd      a1, 30*8(t0)                                /* Initial mepc (thread entry point) */
+    li      t1, 1                                       // Build stack type
+    sd      t1,  0*8(t0)                                // Place stack type on the top
+    sd      zero,  1*8(t0)                              // Initial s11
+    sd      zero,  2*8(t0)                              // Initial s10
+    sd      zero,  3*8(t0)                              // Initial s9
+    sd      zero,  4*8(t0)                              // Initial s8
+    sd      zero,  5*8(t0)                              // Initial s7
+    sd      zero,  6*8(t0)                              // Initial s6
+    sd      zero,  7*8(t0)                              // Initial s5
+    sd      zero,  8*8(t0)                              // Initial s4
+    sd      zero,  9*8(t0)                              // Initial s3
+    sd      zero, 10*8(t0)                              // Initial s2
+    sd      zero, 11*8(t0)                              // Initial s1
+    sd      zero, 12*8(t0)                              // Initial s0
+    sd      zero, 13*8(t0)                              // Initial t6
+    sd      zero, 14*8(t0)                              // Initial t5
+    sd      zero, 15*8(t0)                              // Initial t4
+    sd      zero, 16*8(t0)                              // Initial t3
+    sd      zero, 17*8(t0)                              // Initial t2
+    sd      zero, 18*8(t0)                              // Initial t1
+    sd      zero, 19*8(t0)                              // Initial t0
+    sd      zero, 20*8(t0)                              // Initial a7
+    sd      zero, 21*8(t0)                              // Initial a6
+    sd      zero, 22*8(t0)                              // Initial a5
+    sd      zero, 23*8(t0)                              // Initial a4
+    sd      zero, 24*8(t0)                              // Initial a3
+    sd      zero, 25*8(t0)                              // Initial a2
+    sd      zero, 26*8(t0)                              // Initial a1
+    sd      zero, 27*8(t0)                              // Initial a0
+    sd      zero, 28*8(t0)                              // Initial ra
+    sd      a1, 30*8(t0)                                // Initial mepc (thread entry point)
 #if defined(__riscv_float_abi_single) || defined(__riscv_float_abi_double)
-    sd      zero, 31*8(t0)                              /* Initial ft0 */
-    sd      zero, 32*8(t0)                              /* Initial ft1 */
-    sd      zero, 33*8(t0)                              /* Initial ft2 */
-    sd      zero, 34*8(t0)                              /* Initial ft3 */
-    sd      zero, 35*8(t0)                              /* Initial ft4 */
-    sd      zero, 36*8(t0)                              /* Initial ft5 */
-    sd      zero, 37*8(t0)                              /* Initial ft6 */
-    sd      zero, 38*8(t0)                              /* Initial ft7 */
-    sd      zero, 39*8(t0)                              /* Initial fs0 */
-    sd      zero, 40*8(t0)                              /* Initial fs1 */
-    sd      zero, 41*8(t0)                              /* Initial fa0 */
-    sd      zero, 42*8(t0)                              /* Initial fa1 */
-    sd      zero, 43*8(t0)                              /* Initial fa2 */
-    sd      zero, 44*8(t0)                              /* Initial fa3 */
-    sd      zero, 45*8(t0)                              /* Initial fa4 */
-    sd      zero, 46*8(t0)                              /* Initial fa5 */
-    sd      zero, 47*8(t0)                              /* Initial fa6 */
-    sd      zero, 48*8(t0)                              /* Initial fa7 */
-    sd      zero, 49*8(t0)                              /* Initial fs2 */
-    sd      zero, 50*8(t0)                              /* Initial fs3 */
-    sd      zero, 51*8(t0)                              /* Initial fs4 */
-    sd      zero, 52*8(t0)                              /* Initial fs5 */
-    sd      zero, 53*8(t0)                              /* Initial fs6 */
-    sd      zero, 54*8(t0)                              /* Initial fs7 */
-    sd      zero, 55*8(t0)                              /* Initial fs8 */
-    sd      zero, 56*8(t0)                              /* Initial fs9 */
-    sd      zero, 57*8(t0)                              /* Initial fs10 */
-    sd      zero, 58*8(t0)                              /* Initial fs11 */
-    sd      zero, 59*8(t0)                              /* Initial ft8 */
-    sd      zero, 60*8(t0)                              /* Initial ft9 */
-    sd      zero, 61*8(t0)                              /* Initial ft10 */
-    sd      zero, 62*8(t0)                              /* Initial ft11 */
-    csrr    a1, fcsr                                    /* Read fcsr for initial value */
-    sd      a1, 63*8(t0)                                /* Initial fcsr */
-    sd      zero, 64*8(t0)                              /* Reserved word (0) */
+    sd      zero, 31*8(t0)                              // Initial ft0
+    sd      zero, 32*8(t0)                              // Initial ft1
+    sd      zero, 33*8(t0)                              // Initial ft2
+    sd      zero, 34*8(t0)                              // Initial ft3
+    sd      zero, 35*8(t0)                              // Initial ft4
+    sd      zero, 36*8(t0)                              // Initial ft5
+    sd      zero, 37*8(t0)                              // Initial ft6
+    sd      zero, 38*8(t0)                              // Initial ft7
+    sd      zero, 39*8(t0)                              // Initial fs0
+    sd      zero, 40*8(t0)                              // Initial fs1
+    sd      zero, 41*8(t0)                              // Initial fa0
+    sd      zero, 42*8(t0)                              // Initial fa1
+    sd      zero, 43*8(t0)                              // Initial fa2
+    sd      zero, 44*8(t0)                              // Initial fa3
+    sd      zero, 45*8(t0)                              // Initial fa4
+    sd      zero, 46*8(t0)                              // Initial fa5
+    sd      zero, 47*8(t0)                              // Initial fa6
+    sd      zero, 48*8(t0)                              // Initial fa7
+    sd      zero, 49*8(t0)                              // Initial fs2
+    sd      zero, 50*8(t0)                              // Initial fs3
+    sd      zero, 51*8(t0)                              // Initial fs4
+    sd      zero, 52*8(t0)                              // Initial fs5
+    sd      zero, 53*8(t0)                              // Initial fs6
+    sd      zero, 54*8(t0)                              // Initial fs7
+    sd      zero, 55*8(t0)                              // Initial fs8
+    sd      zero, 56*8(t0)                              // Initial fs9
+    sd      zero, 57*8(t0)                              // Initial fs10
+    sd      zero, 58*8(t0)                              // Initial fs11
+    sd      zero, 59*8(t0)                              // Initial ft8
+    sd      zero, 60*8(t0)                              // Initial ft9
+    sd      zero, 61*8(t0)                              // Initial ft10
+    sd      zero, 62*8(t0)                              // Initial ft11
+    csrr    a1, fcsr                                    // Read fcsr for initial value
+    sd      a1, 63*8(t0)                                // Initial fcsr
+    sd      zero, 64*8(t0)                              // Reserved word (0)
 #else
-    sd      zero, 31*8(t0)                              /* Reserved word (0) */
+    sd      zero, 31*8(t0)                              // Reserved word (0)
 #endif
 
     /* Setup stack pointer.  */
     /* thread_ptr -> tx_thread_stack_ptr =  t0;  */
 
-    sd      t0, 16(a0)                                  /* Save stack pointer in thread's */
-    ret                                                 /*   control block and return */
+    sd      t0, 16(a0)                                  // Save stack pointer in thread's
+    ret                                                 //   control block and return
 /* }  */

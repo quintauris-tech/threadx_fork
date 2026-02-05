@@ -1,10 +1,10 @@
 /***************************************************************************
- * Copyright (c) 2024 Microsoft Corporation 
- * 
+ * Copyright (c) 2024 Microsoft Corporation
+ *
  * This program and the accompanying materials are made available under the
  * terms of the MIT License which is available at
  * https://opensource.org/licenses/MIT.
- * 
+ *
  * SPDX-License-Identifier: MIT
  **************************************************************************/
 
@@ -74,18 +74,18 @@ _tx_initialize_low_level:
     /* Save the system stack pointer.  */
     /* _tx_thread_system_stack_ptr = sp;  */
     la      t0, _tx_thread_system_stack_ptr
-    sd      sp, 0(t0)                                   /* Save system stack pointer */
+    sd      sp, 0(t0)                                   // Save system stack pointer
 
     /* Pickup first free address.  */
     /* _tx_initialize_unused_memory(__tx_free_memory_start);  */
-    la      t0, __tx_free_memory_start                  /* Pickup first free address */
+    la      t0, __tx_free_memory_start                  // Pickup first free address
     la      t1, _tx_initialize_unused_memory
-    sd      t0, 0(t1)                                   /* Save unused memory address */
+    sd      t0, 0(t1)                                   // Save unused memory address
 
     /* Initialize floating point control/status register if floating point is enabled.  */
 #ifdef __riscv_flen
     li      t0, 0
-    csrw    fcsr, t0                                    /* Clear FP control/status register */
+    csrw    fcsr, t0                                    // Clear FP control/status register
 #endif
 
     ret
@@ -93,23 +93,23 @@ _tx_initialize_low_level:
 /* Timer Interrupt Handler Note:
    Platform-specific implementations must provide their own timer ISR.
    The timer interrupt handler should follow this execution flow:
-   
+
    1. Disable interrupts (if not done by hardware exception entry)
    2. Allocate interrupt stack frame (65*8 bytes with FP, 32*8 bytes without)
    3. Save RA (x1) on the stack at offset 28*8
    4. Call _tx_thread_context_save to save thread context
    5. Call _tx_timer_interrupt to process the timer tick
    6. Call _tx_thread_context_restore to resume execution (does not return)
-   
+
    Example (for CLINT timer):
-   
+
        _tx_timer_interrupt_handler:
-           addi    sp, sp, -32*8             
-           sd      ra, 28*8(sp)              
+           addi    sp, sp, -32*8
+           sd      ra, 28*8(sp)
            call    _tx_thread_context_save
            call    _tx_timer_interrupt
-           j       _tx_thread_context_restore 
-   
+           j       _tx_thread_context_restore
+
    The port assumes Machine mode (M-mode) execution.
    For Supervisor mode (S-mode), use sstatus and SIE/SPIE instead of mstatus.
    See the RISC-V Privileged Specification for more details. */
