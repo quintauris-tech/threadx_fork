@@ -1,10 +1,10 @@
 /***************************************************************************
- * Copyright (c) 2024 Microsoft Corporation 
- * 
+ * Copyright (c) 2024 Microsoft Corporation
+ *
  * This program and the accompanying materials are made available under the
  * terms of the MIT License which is available at
  * https://opensource.org/licenses/MIT.
- * 
+ *
  * SPDX-License-Identifier: MIT
  **************************************************************************/
 
@@ -53,26 +53,6 @@
 #ifndef TX_PORT_H
 #define TX_PORT_H
 
-#ifdef __ASSEMBLER__
-
-
-#if __riscv_xlen == 64
-# define SLL32    sllw
-# define STORE    sd
-# define LOAD     ld
-# define LWU      lwu
-# define LOG_REGBYTES 3
-#else
-# define SLL32    sll
-# define STORE    sw
-# define LOAD     lw
-# define LWU      lw
-# define LOG_REGBYTES 2
-#endif
-#define REGBYTES (1 << LOG_REGBYTES)
-
-#else   /*not __ASSEMBLER__ */
-
 /* Include for memset.  */
 #include <string.h>
 
@@ -86,10 +66,7 @@
    alternately be defined on the command line.  */
 
 #include "tx_user.h"
-#endif
-
-
-/* Define compiler library include files.  */
+#endif /* TX_INCLUDE_USER_DEFINE_FILE */
 
 
 /* Define ThreadX basic types for this port.  */
@@ -105,8 +82,6 @@ typedef unsigned long long                      ULONG64;
 typedef short                                   SHORT;
 typedef unsigned short                          USHORT;
 #define ULONG64_DEFINED
-#define ALIGN_TYPE_DEFINED
-#define ALIGN_TYPE                              ULONG64
 
 
 
@@ -253,25 +228,34 @@ typedef unsigned short                          USHORT;
    is used to define a local function save area for the disable and restore
    macros.  */
 
+/* Expose helper used to perform an atomic read/modify/write of mstatus.
+   The helper composes and returns the posture per ThreadX contract. */
+UINT                                            _tx_thread_interrupt_control(UINT new_posture);
+
 #ifdef TX_DISABLE_INLINE
 
-ULONG64                                         _tx_thread_interrupt_control(unsigned int new_posture);
+#define TX_INTERRUPT_SAVE_AREA                  register UINT interrupt_save;
 
-#define TX_INTERRUPT_SAVE_AREA                  register ULONG64 interrupt_save;
+#define TX_DISABLE                              __asm__ volatile("csrrci %0, mstatus, 8" : "=r" (interrupt_save) :: "memory");
+#define TX_RESTORE                              { \
+                                                    unsigned long _temp_mstatus; \
+                                                    __asm__ volatile( \
+                                                        "csrc mstatus, 8\n" \
+                                                        "andi %0, %1, 8\n" \
+                                                        "csrs mstatus, %0" \
+                                                        : "=&r" (_temp_mstatus) \
+                                                        : "r" (interrupt_save) \
+                                                        : "memory"); \
+                                                }
+
+#else
+
+#define TX_INTERRUPT_SAVE_AREA                  register UINT interrupt_save;
 
 #define TX_DISABLE                              interrupt_save =  _tx_thread_interrupt_control(TX_INT_DISABLE);
 #define TX_RESTORE                              _tx_thread_interrupt_control(interrupt_save);
 
-#else
-
-#define TX_INTERRUPT_SAVE_AREA                  ULONG64 interrupt_save;
-/* Atomically read mstatus into interrupt_save and clear bit 3 of mstatus.  */
-#define TX_DISABLE                              {__asm__ ("csrrci %0, mstatus, 0x08" : "=r" (interrupt_save) : );};
-/* We only care about mstatus.mie (bit 3), so mask interrupt_save and write to mstatus.  */
-#define TX_RESTORE                              {register ULONG64 __tempmask = interrupt_save & 0x08; \
-                                                __asm__ ("csrrs x0, mstatus, %0 \n\t" : : "r" (__tempmask) : );};
-
-#endif
+#endif /* TX_DISABLE_INLINE */
 
 
 /* Define the interrupt lockout macros for each ThreadX object.  */
@@ -291,7 +275,6 @@ CHAR                            _tx_version_id[] =
                                     "Copyright (c) 2024 Microsoft Corporation. * ThreadX RISC-V64/GNU Version 6.4.2 *";
 #else
 extern  CHAR                    _tx_version_id[];
-#endif
+#endif /* TX_THREAD_INIT */
 
-#endif   /*not __ASSEMBLER__ */
-#endif
+#endif /* TX_PORT_H */
