@@ -53,6 +53,8 @@
 #ifndef TX_PORT_H
 #define TX_PORT_H
 
+#ifndef __ASSEMBLER__
+
 /* Include for memset.  */
 #include <string.h>
 
@@ -68,10 +70,14 @@
 #include "tx_user.h"
 #endif /* TX_INCLUDE_USER_DEFINE_FILE */
 
+#endif /* __ASSEMBLER__ */
+
 
 /* Define ThreadX basic types for this port.  */
 
 #define VOID                                    void
+
+#ifndef __ASSEMBLER__
 typedef char                                    CHAR;
 typedef unsigned char                           UCHAR;
 typedef int                                     INT;
@@ -82,6 +88,7 @@ typedef unsigned long long                      ULONG64;
 typedef short                                   SHORT;
 typedef unsigned short                          USHORT;
 #define ULONG64_DEFINED
+#endif /* __ASSEMBLER__ */
 
 
 
@@ -230,7 +237,9 @@ typedef unsigned short                          USHORT;
 
 /* Expose helper used to perform an atomic read/modify/write of mstatus.
    The helper composes and returns the posture per ThreadX contract. */
+#ifndef __ASSEMBLER__
 UINT                                            _tx_thread_interrupt_control(UINT new_posture);
+#endif
 
 #ifdef TX_DISABLE_INLINE
 
@@ -270,11 +279,13 @@ UINT                                            _tx_thread_interrupt_control(UIN
 
 /* Define the version ID of ThreadX.  This may be utilized by the application.  */
 
+#ifndef __ASSEMBLER__
 #ifdef TX_THREAD_INIT
 CHAR                            _tx_version_id[] =
                                     "Copyright (c) 2024 Microsoft Corporation. * ThreadX RISC-V64/GNU Version 6.4.2 *";
 #else
 extern  CHAR                    _tx_version_id[];
 #endif /* TX_THREAD_INIT */
+#endif /* __ASSEMBLER__ */
 
 #endif /* TX_PORT_H */
