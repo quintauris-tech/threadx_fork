@@ -9,7 +9,6 @@
  **************************************************************************/
 
 #include "csr.h"
-#include "tx_port.h"
 
  .section .text
  .align 4
@@ -67,12 +66,12 @@
     .extern  _tx_thread_context_restore
     trap_entry:
 #if defined(__riscv_float_abi_single) || defined(__riscv_float_abi_double)
-	addi sp, sp, -65*REGBYTES         // Allocate space for all registers - with floating point enabled
+	addi sp, sp, -520                 // Allocate space for all registers - with floating point enabled (65*8)
 #else
-	addi sp, sp, -32*REGBYTES         // Allocate space for all registers - without floating point enabled
+	addi sp, sp, -256                 // Allocate space for all registers - without floating point enabled (32*8)
 #endif
 
-	STORE   x1, 28*REGBYTES(sp)       // Store RA, 28*REGBYTES(because call will override ra [ra is a calle register in riscv])
+	sd   x1, 224(sp)                  // Store RA (28*8 = 224, because call will override ra [ra is a callee register in riscv])
 
     	call    _tx_thread_context_save    	
 
@@ -138,19 +137,21 @@ _err:
     .extern  _end
     .extern  board_init
 _tx_initialize_low_level:
-    sd      sp, _tx_thread_system_stack_ptr, t0     // Save system stack pointer
+    la      t0, _tx_thread_system_stack_ptr
+    sd      sp, 0(t0)                              // Save system stack pointer
 
-    la      t0, _end            		    // Pickup first free address
-    sd      t0, _tx_initialize_unused_memory, t1    // Save unused memory address
+    la      t0, _end            		           // Pickup first free address
+    la      t1, _tx_initialize_unused_memory
+    sd      t0, 0(t1)                              // Save unused memory address
     li      t0, MSTATUS_MIE
-    csrrc   zero, mstatus, t0			    // clear MSTATUS_MIE bit
+    csrrc   zero, mstatus, t0			           // clear MSTATUS_MIE bit
     li 	    t0, (MSTATUS_MPP_M | MSTATUS_MPIE )
-    csrrs   zero, mstatus, t0			    // set MSTATUS_MPP, MPIE bit
+    csrrs   zero, mstatus, t0			           // set MSTATUS_MPP, MPIE bit
     li	    t0, (MIE_MTIE | MIE_MSIE | MIE_MEIE)
-    csrrs   zero, mie, t0			    // set mie
+    csrrs   zero, mie, t0			               // set mie
 #ifdef __riscv_flen
     li      t0, MSTATUS_FS
-    csrrs   zero, mstatus, t0			    // set MSTATUS_FS bit to open f/d isa in riscv
+    csrrs   zero, mstatus, t0			           // set MSTATUS_FS bit to open f/d isa in riscv
     fscsr   x0
 #endif
     addi    sp, sp, -8

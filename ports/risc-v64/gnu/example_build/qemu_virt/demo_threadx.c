@@ -5,7 +5,7 @@
 #include "tx_api.h"
 #include "uart.h"
 #define DEMO_STACK_SIZE         1024
-#define DEMO_BYTE_POOL_SIZE     9120
+#define DEMO_BYTE_POOL_SIZE     9180
 #define DEMO_BLOCK_POOL_SIZE    100
 #define DEMO_QUEUE_SIZE         100
 
